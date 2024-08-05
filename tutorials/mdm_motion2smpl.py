@@ -220,7 +220,7 @@ if __name__ == '__main__':
     parser.add_argument("--model_type", type=str, default='smplx', help='model_type; e.g. smplx/smpl')
     parser.add_argument("--device", type=str, default='cuda:0', help='computation device')
     parser.add_argument("--gender", type=str, default='neutral', help='gender; e.g. neutral')
-    parser.add_argument("--save_render", type=bool, default=True, help='render IK results')
+    parser.add_argument("--save_render", default=False, action='store_true' help='render IK results')
     parser.add_argument("--verbosity", type=int, default=0, help='0: silent, 1: text, 2: display')
     params = parser.parse_args()
     # params = {
@@ -255,4 +255,5 @@ if __name__ == '__main__':
 
 
 # example script
-# python mdm_motion2smpl.py --input "/db-mnt/mnt/efs-mount/home/jarondu/human_animate3D/model_assets/MoMask/generation3/MoMask_Original/000000/joint/000000_len172.npy" 
+# python mdm_motion2smpl.py --input "/db-mnt/mnt/efs-mount/home/jarondu/human_animate3D/model_assets/MoMask/generation3/MoMask_Original/000000/joint/000000_len172.npy" --save_render False
+

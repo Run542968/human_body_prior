@@ -117,7 +117,7 @@ def convert_mdm_npy_to_amass_npz(skeleton_npy_fname, out_fname=None, save_render
     vposer_expr_dir = osp.join(support_dir,'vposer_v2_05')
 
     # 'PATH_TO_SMPLX_model.npz'  obtain from https://smpl-x.is.tue.mpg.de/downloads
-    bm_fname = osp.join(support_dir, f'models/{surface_model_type}/{gender}/model.npz')
+    bm_fname = osp.join(support_dir, f'models/{surface_model_type}/{surface_model_type.upper()}_{gender.upper()}.npz')
 
     if isinstance(skeleton_npy_fname, np.ndarray):
         assert out_fname is not None, 'when passing motion file out_fname should be provided'
@@ -252,3 +252,7 @@ if __name__ == '__main__':
                                          batch_size=params.batch_size,
                                          save_render=params.save_render,
                                          verbosity=params.verbosity)
+
+
+# example script
+# python mdm_motion2smpl.py --input "/db-mnt/mnt/efs-mount/home/jarondu/human_animate3D/model_assets/MoMask/generation3/MoMask_Original/000000/joint/000000_len172.npy" 

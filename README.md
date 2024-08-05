@@ -42,8 +42,13 @@ VPoser has the following features:
 # runing this for solving issue when installing psbody-mesh, look at: https://github.com/EricGuo5513/HumanML3D/issues/10#issuecomment-1367365900
 sudo apt-get install libboost-dev 
 ```
+
 Clone this repo and run the following from the root folder:
 ```bash
+conda create -n hbp python=3.7
+conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=11.0 -c pytorch
+conda activate hbp
+
 pip install -r requirements.txt
 python setup.py develop
 ```

@@ -35,8 +35,13 @@ VPoser has the following features:
 [comment]: <> (- [Torchgeometry 0.1.2]&#40;https://pypi.org/project/torchgeometry/0.1.2/&#41;)
 
 [comment]: <> (- [Body Visualizer]&#40;https://github.com/nghorbani/body_visualizer&#41; for visualizations)
-  
 
+
+**Resolve issue, can't install psbody-mesh: Running setup.py install for psbody-mesh did not run successfully.**
+```bash
+# runing this for solving issue when installing psbody-mesh, look at: https://github.com/EricGuo5513/HumanML3D/issues/10#issuecomment-1367365900
+sudo apt-get install libboost-dev 
+```
 Clone this repo and run the following from the root folder:
 ```bash
 pip install -r requirements.txt

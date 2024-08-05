@@ -98,11 +98,11 @@ def transform_smpl_coordinate(bm_fname: Path, trans: np.ndarray,
             'trans': transformed_trans.astype(np.float32), }
 
 
-def convert_mdm_mp4_to_amass_npz(skeleton_movie_fname, out_fname=None, save_render=False, comp_device='cuda:0',
+def convert_mdm_npy_to_amass_npz(skeleton_npy_fname, out_fname=None, save_render=False, comp_device='cuda:0',
                                  surface_model_type = 'smplx', gender = 'neutral', batch_size=128, verbosity=0):
     """
 
-    :param skeleton_movie_fname: either a result npy file or a motion numpy array [nframes, njoints, 3]
+    :param skeleton_npy_fname: either a result npy file or a motion numpy array [nframes, njoints, 3]
     :param surface_model_type:
     :param gender:
     :param batch_size:
@@ -119,22 +119,15 @@ def convert_mdm_mp4_to_amass_npz(skeleton_movie_fname, out_fname=None, save_rend
     # 'PATH_TO_SMPLX_model.npz'  obtain from https://smpl-x.is.tue.mpg.de/downloads
     bm_fname = osp.join(support_dir, f'models/{surface_model_type}/{gender}/model.npz')
 
-    if isinstance(skeleton_movie_fname, np.ndarray):
+    if isinstance(skeleton_npy_fname, np.ndarray):
         assert out_fname is not None, 'when passing motion file out_fname should be provided'
-        motion = skeleton_movie_fname
+        motion = skeleton_npy_fname
     else:
-        assert osp.exists(skeleton_movie_fname), skeleton_movie_fname
-        parsed_name = osp.basename(skeleton_movie_fname).replace('.mp4', '').replace('sample', '').replace('rep', '')
-
-        sample_idx, rep_idx = [int(e) for e in parsed_name.split('_')]
-        mdm_fname = osp.join(osp.dirname(skeleton_movie_fname), 'results.npy')
-        mdm_data = np.load(mdm_fname, allow_pickle=True).tolist()
-        total_num_samples = mdm_data['num_samples']
-        absl_idx = rep_idx * total_num_samples + sample_idx
-        motion = mdm_data['motion'][absl_idx].transpose(2, 0, 1)  # [nframes, njoints, 3]
-
+        assert osp.exists(skeleton_npy_fname), skeleton_npy_fname
+        motion = np.load(skeleton_npy_fname, allow_pickle=True)
+ 
     if out_fname is None:
-        out_fname = skeleton_movie_fname.replace('.mp4', '.npz')
+        out_fname = skeleton_npy_fname.replace('.npy', '.npz')
 
     render_out_fname = out_fname.replace('.npz', f'_{surface_model_type}.mp4')
     if osp.exists(render_out_fname):
@@ -221,8 +214,8 @@ if __name__ == '__main__':
     import argparse
     from glob import glob
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", type=str, help='skeleton movie.mp4 filename that is to be converted into SMPL')
-    parser.add_argument("--pattern", type=str, help='filename pattern for skeleton */*/movies.mp4 to be converted into SMPL')
+    parser.add_argument("--input", type=str, help='skeleton joint.npy filename that is to be converted into SMPL')
+    parser.add_argument("--pattern", type=str, help='filename pattern for skeleton */*/joint.npy to be converted into SMPL')
     parser.add_argument("--batch_size", type=int, default=128, help='batch size for inverse kinematics')
     parser.add_argument("--model_type", type=str, default='smplx', help='model_type; e.g. smplx/smpl')
     parser.add_argument("--device", type=str, default='cuda:0', help='computation device')
@@ -231,13 +224,13 @@ if __name__ == '__main__':
     parser.add_argument("--verbosity", type=int, default=0, help='0: silent, 1: text, 2: display')
     params = parser.parse_args()
     # params = {
-    #     'input':'/home/nima/opt/code-repos/motion-diffusion-model/save/humanml_trans_enc_512/samples_humanml_trans_enc_512_000200000_seed10/sample00_rep00.mp4',
+    #     'input':'example.npy', # [nframe, 22, 3]
     #          'save_render': True
     #           }
     if (params.input is None) and (params.pattern is None):
         raise ValueError('either input or pattern should be provided')
     if not params.input is None:
-        convert_mdm_mp4_to_amass_npz(skeleton_movie_fname=params.input,
+        convert_mdm_npy_to_amass_npz(skeleton_npy_fname=params.input,
                                  surface_model_type=params.model_type,
                                  gender=params.gender,
                                  batch_size=params.batch_size,
@@ -245,15 +238,15 @@ if __name__ == '__main__':
                                  verbosity=params.verbosity)
     else:
         assert params.pattern is not None
-        mp4_fnames = glob(params.pattern)
-        print(f'found {len(mp4_fnames)} mp4 files')
-        for mp4_fname in mp4_fnames:
+        npy_fnames = glob(params.pattern)
+        print(f'found {len(npy_fnames)} npy files')
+        for npy_fname in npy_fnames:
 
-            if mp4_fname.endswith('_smplx.mp4'):
-                print(f'skipping smplx render file: {mp4_fname}')
+            if npy_fname.endswith('.npy'):
+                print(f'skipping smplx render file: {npy_fname}')
                 continue
 
-            convert_mdm_mp4_to_amass_npz(skeleton_movie_fname=mp4_fname,
+            convert_mdm_npy_to_amass_npz(skeleton_npy_fname=npy_fname,
                                          surface_model_type=params.model_type,
                                          gender=params.gender,
                                          batch_size=params.batch_size,

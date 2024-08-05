@@ -53,6 +53,19 @@ pip install -r requirements.txt
 python setup.py develop
 ```
 
+## Issue Resolution
+1. **ImportError: Library "GLU" not found.**
+    - You can see: https://github.com/mmatl/pyrender/issues/32
+    - I resolve it by: `sudo apt install freeglut3-dev`
+2. **Exception: pyglet 2.0.0 requires Python 3.8 or newer**
+    - You can see: https://github.com/kengz/SLM-Lab/issues/519
+    - I resolve it by: `pip install pyglet==1.5.27`
+3. **No file of 'smplx' or 'V02_05'**
+    - You can download them from: https://smpl-x.is.tuebingen.mpg.de/
+4. **Issue of 'psbody-mesh'**
+    - You can see: https://github.com/EricGuo5513/HumanML3D/issues/10#issuecomment-1367365900
+    - I resolve it by: `sudo apt-get install libboost-dev`
+
 ## Tutorials
 ![alt text](support_data/latent_interpolation_1.gif "Interpolation of novel poses on the smoother VPoser latent space.")
 ![alt text](support_data/latent_interpolation_2.gif "Interpolation of novel poses on the smoother VPoser latent space.")

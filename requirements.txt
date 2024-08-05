@@ -14,3 +14,5 @@ omegaconf
 loguru
 colour
 trimesh
+pyrender
+pyglet==1.5.27

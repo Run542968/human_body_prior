@@ -116,7 +116,7 @@ def convert_mdm_npy_to_amass_npz(skeleton_npy_fname, out_fname=None, save_render
     # 'TRAINED_MODEL_DIRECTORY'  in this directory the trained model along with the model code exist
     vposer_expr_dir = osp.join(support_dir,'vposer_v2_05')
 
-    # 'PATH_TO_SMPLX_model.npz'  obtain from https://smpl-x.is.tue.mpg.de/downloads
+    # 'PATH_TO_SMPLX_model.npz'  obtain from https://smpl-x.is.tuebingen.mpg.de/
     bm_fname = osp.join(support_dir, f'models/{surface_model_type}/{surface_model_type.upper()}_{gender.upper()}.npz')
 
     if isinstance(skeleton_npy_fname, np.ndarray):
@@ -130,9 +130,10 @@ def convert_mdm_npy_to_amass_npz(skeleton_npy_fname, out_fname=None, save_render
         out_fname = skeleton_npy_fname.replace('.npy', '.npz')
 
     render_out_fname = out_fname.replace('.npz', f'_{surface_model_type}.mp4')
-    if osp.exists(render_out_fname):
-        logger.warning(f'render output already exists: {render_out_fname}. skipping...')
+    if osp.exists(out_fname):
+        logger.warning(f'render output already exists: {out_fname}. skipping...')
         return
+    
     n_joints = 22
     num_betas = 16
 
@@ -220,12 +221,12 @@ if __name__ == '__main__':
     parser.add_argument("--model_type", type=str, default='smplx', help='model_type; e.g. smplx/smpl')
     parser.add_argument("--device", type=str, default='cuda:0', help='computation device')
     parser.add_argument("--gender", type=str, default='neutral', help='gender; e.g. neutral')
-    parser.add_argument("--save_render", default=False, action='store_true' help='render IK results')
+    parser.add_argument("--save_render", default=False, action='store_true', help='render IK results')
     parser.add_argument("--verbosity", type=int, default=0, help='0: silent, 1: text, 2: display')
     params = parser.parse_args()
     # params = {
     #     'input':'example.npy', # [nframe, 22, 3]
-    #          'save_render': True
+    #          'save_render': False
     #           }
     if (params.input is None) and (params.pattern is None):
         raise ValueError('either input or pattern should be provided')
@@ -238,11 +239,11 @@ if __name__ == '__main__':
                                  verbosity=params.verbosity)
     else:
         assert params.pattern is not None
-        npy_fnames = glob(params.pattern)
+        npy_fnames = glob(params.pattern,recursive=True)
         print(f'found {len(npy_fnames)} npy files')
         for npy_fname in npy_fnames:
 
-            if npy_fname.endswith('.npy'):
+            if npy_fname.endswith('.npz'):
                 print(f'skipping smplx render file: {npy_fname}')
                 continue
 
@@ -257,3 +258,4 @@ if __name__ == '__main__':
 # example script
 # python mdm_motion2smpl.py --input "/db-mnt/mnt/efs-mount/home/jarondu/human_animate3D/model_assets/MoMask/generation3/MoMask_Original/000000/joint/000000_len172.npy" --save_render False
 
+# python mdm_motion2smpl.py --pattern "/db-mnt/mnt/efs-mount/home/jarondu/human_animate3D/model_assets/MoMask/generation3/MoMask_Original/**/*.npy" --save_render False

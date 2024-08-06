@@ -121,10 +121,10 @@ def convert_mdm_npy_to_amass_npz(skeleton_npy_fname, out_fname=None, save_render
 
     if isinstance(skeleton_npy_fname, np.ndarray):
         assert out_fname is not None, 'when passing motion file out_fname should be provided'
-        motion = skeleton_npy_fname
+        motion = skeleton_npy_fname.astype(float)
     else:
         assert osp.exists(skeleton_npy_fname), skeleton_npy_fname
-        motion = np.load(skeleton_npy_fname, allow_pickle=True)
+        motion = np.load(skeleton_npy_fname, allow_pickle=True).astype(float)
  
     if out_fname is None:
         out_fname = skeleton_npy_fname.replace('.npy', '.npz')
@@ -256,6 +256,6 @@ if __name__ == '__main__':
 
 
 # example script
-# python mdm_motion2smpl.py --input "/db-mnt/mnt/efs-mount/home/jarondu/human_animate3D/model_assets/MoMask/generation3/MoMask_Original/000000/joint/000000_len172.npy" --save_render False
+# python mdm_motion2smpl.py --input "/db-mnt/mnt/efs-mount/home/jarondu/human_animate3D/model_assets/MoMask/generation3/MoMask_Original/000000/joint/000000_len172.npy"
 
-# python mdm_motion2smpl.py --pattern "/db-mnt/mnt/efs-mount/home/jarondu/human_animate3D/model_assets/MoMask/generation3/MoMask_Original/**/*.npy" --save_render False
+# python mdm_motion2smpl.py --pattern "/db-mnt/mnt/efs-mount/home/jarondu/human_animate3D/model_assets/MoMask/generation3/MoMask_Original/**/*.npy"
